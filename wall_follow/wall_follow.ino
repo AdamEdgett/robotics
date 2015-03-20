@@ -1,8 +1,8 @@
 #include <NewPing.h>
 
 // Motor pins
-#define SPEED_RIGHT 6
-#define SPEED_LEFT 5
+#define SPEED_RIGHT 5
+#define SPEED_LEFT 6
 #define DIR_RIGHT 8
 #define DIR_LEFT 7
 
@@ -25,22 +25,19 @@
 #define DIR_FW LOW
 #define DIR_BW HIGH
 
+static double MS_PER_DEGREE = 10;
+
 NewPing leftSonar(PING_TRIGGER_LEFT, PING_ECHO_LEFT, MAX_DISTANCE);
 NewPing centerSonar(PING_TRIGGER_CENTER, PING_ECHO_CENTER, MAX_DISTANCE);
-NewPing rightSonar(PING_TRIGGER_RIGHT, PING_ECHO_RIGHT, MAX_DISTANCE);
 
 void setup()
 {
   for(int i = 5; i <= 8; i++)
     pinMode(i, OUTPUT);
 
-  pinMode(PING_TRIGGER_LEFT, OUTPUT);
-  pinMode(PING_TRIGGER_CENTER, OUTPUT);
-  pinMode(PING_TRIGGER_RIGHT, OUTPUT);
-  pinMode(PING_ECHO_LEFT, INPUT);
-  pinMode(PING_ECHO_CENTER, INPUT);
-  pinMode(PING_ECHO_RIGHT, INPUT);
-
+  leftSonar.ping();
+  centerSonar.ping();
+  delay(250);
   Serial.begin(9600);
 }
 
@@ -48,30 +45,111 @@ void loop()
 {
   int cmLeft = (leftSonar.ping() / US_ROUNDTRIP_CM);
   int cmCenter = (centerSonar.ping() / US_ROUNDTRIP_CM);
-  int cmRight = (rightSonar.ping() / US_ROUNDTRIP_CM);
+
+  // Correcting max distant timeout values
+  if (cmLeft == 0)
+    cmLeft = 1000;
+  if (cmCenter == 0)
+    cmCenter = 1000;
+
   Serial.println("Ping left: " + String(cmLeft) + "cm");
   Serial.println("Ping center: " + String(cmCenter) + "cm");
-  Serial.println("Ping right: " + String(cmRight) + "cm");
 
+  // Default to forward
   digitalWrite(DIR_RIGHT, DIR_FW);
   digitalWrite(DIR_LEFT, DIR_FW);
 
-  if (cmCenter < 3) {
-    analogWrite(SPEED_LEFT, SPEED_NONE);
-    analogWrite(SPEED_RIGHT, SPEED_NONE);
-  } else if (cmCenter < 10) {
-    analogWrite(SPEED_LEFT, SPEED_FAST);
-    digitalWrite(DIR_LEFT, DIR_BW);
-    analogWrite(SPEED_RIGHT, SPEED_FAST);
-  } else if (cmLeft > 6 && cmLeft < 60) {
-    analogWrite(SPEED_LEFT, SPEED_FAST);
-    analogWrite(SPEED_RIGHT, SPEED_NONE);
-  } else if (cmRight > 6 && cmRight < 60) {
-    analogWrite(SPEED_LEFT, SPEED_NONE);
-    analogWrite(SPEED_RIGHT, SPEED_FAST);
+  if (cmCenter < 6) {
+    stop();
+  } else if (cmLeft < 20 && cmCenter < 15) {
+    pivotRight();
+    delay(1000);
+    goForward();
+    delay(200);
+  } else if (cmLeft < 10) {
+    correctRight();
+  } else if (cmLeft > 14 && cmLeft < 50) {
+    correctLeft();
+  } else if (cmLeft > 50) {
+    goLeft();
+    delay(500);
+    goForward();
+    delay(200);
   } else {
-    analogWrite(SPEED_LEFT, SPEED_FAST);
-    analogWrite(SPEED_RIGHT, SPEED_FAST);
+    goForward();
   }
-  delay(40);
+}
+
+void stop()
+{
+  Serial.println("stop");
+  analogWrite(SPEED_LEFT, SPEED_NONE);
+  analogWrite(SPEED_RIGHT, SPEED_NONE);
+}
+
+void goForward()
+{
+  Serial.println("go forward");
+  analogWrite(SPEED_LEFT, SPEED_FAST);
+  analogWrite(SPEED_RIGHT, SPEED_FAST);
+}
+
+void goLeft()
+{
+  Serial.println("go left");
+  analogWrite(SPEED_LEFT, SPEED_NONE);
+  analogWrite(SPEED_RIGHT, SPEED_FAST);
+}
+
+void goRight()
+{
+  Serial.println("go right");
+  analogWrite(SPEED_LEFT, SPEED_FAST);
+  analogWrite(SPEED_RIGHT, SPEED_SLOW);
+}
+
+void correctLeft()
+{
+  Serial.println("correct left");
+  analogWrite(SPEED_LEFT, SPEED_SLOW);
+  analogWrite(SPEED_RIGHT, SPEED_MED);
+}
+
+void correctRight()
+{
+  Serial.println("correct right");
+  analogWrite(SPEED_LEFT, SPEED_MED);
+  analogWrite(SPEED_RIGHT, SPEED_SLOW);
+}
+
+void pivotLeft()
+{
+  Serial.println("pivot left");
+  digitalWrite(DIR_RIGHT, DIR_BW);
+  analogWrite(SPEED_LEFT, SPEED_FAST);
+  analogWrite(SPEED_RIGHT, SPEED_SLOW);
+}
+
+void pivotRight()
+{
+  Serial.println("pivot right");
+  digitalWrite(DIR_LEFT, DIR_BW);
+  analogWrite(SPEED_LEFT, SPEED_FAST);
+  analogWrite(SPEED_RIGHT, SPEED_SLOW);
+}
+
+void turnLeft(int degrees)
+{
+  Serial.println("turn left");
+  pivotLeft();
+  delay(MS_PER_DEGREE * degrees);
+  stop();
+}
+
+void turnRight(int degrees)
+{
+  Serial.println("turn right");
+  pivotRight();
+  delay(MS_PER_DEGREE * degrees);
+  stop();
 }
