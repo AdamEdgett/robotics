@@ -25,8 +25,6 @@
 #define DIR_FW LOW
 #define DIR_BW HIGH
 
-static double MS_PER_DEGREE = 10;
-
 NewPing leftSonar(PING_TRIGGER_LEFT, PING_ECHO_LEFT, MAX_DISTANCE);
 NewPing centerSonar(PING_TRIGGER_CENTER, PING_ECHO_CENTER, MAX_DISTANCE);
 
@@ -150,20 +148,4 @@ void pivotRight()
   digitalWrite(DIR_LEFT, DIR_BW);
   analogWrite(SPEED_LEFT, SPEED_FAST);
   analogWrite(SPEED_RIGHT, SPEED_SLOW);
-}
-
-void turnLeft(int degrees)
-{
-  Serial.println("turn left");
-  pivotLeft();
-  delay(MS_PER_DEGREE * degrees);
-  stop();
-}
-
-void turnRight(int degrees)
-{
-  Serial.println("turn right");
-  pivotRight();
-  delay(MS_PER_DEGREE * degrees);
-  stop();
 }
