@@ -66,10 +66,24 @@ void loop()
     delay(1000);
     goForward();
     delay(200);
-  } else if (cmLeft < 10) {
+  } else if (cmLeft < 9) {
     correctRight();
-  } else if (cmLeft > 14 && cmLeft < 50) {
+  } else if (cmLeft > 13 && cmLeft <= 16) {
     correctLeft();
+  } else if (cmLeft > 16 && cmLeft <= 35) {
+    correctLeft();
+    delay(1000);
+    goForward();
+    delay(600);
+    correctRight();
+    delay(750);
+  } else if (cmLeft > 35 && cmLeft <= 50) {
+    correctLeft();
+    delay(1000);
+    goForward();
+    delay(1000);
+    correctRight();
+    delay(750);
   } else if (cmLeft > 50) {
     goLeft();
     delay(500);
