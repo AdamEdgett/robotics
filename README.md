@@ -1,5 +1,10 @@
 # Robotics
 
+## Projects
+### Wall Follow
+Robot follows a wall and turns appropriately around and in corners  
+Uses ultrasonic sensors to determine distances to walls  
+
 ## Variables
 ### Motors
 M1 = Right  
