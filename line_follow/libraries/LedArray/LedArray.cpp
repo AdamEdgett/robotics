@@ -1,21 +1,14 @@
 #include <Arduino.h>
 #include "LedArray.h"
 
-LedArray::LedArray(int pin)
+LedArray::LedArray(int start_pin, double tape_factor)
 {
+    this->tape_factor = tape_factor;
+
     for (int i = 0; i < LED_SENSOR_COUNT; i++)
     {
-        this->sensor_pins[i] = pin+i;
+        this->sensor_pins[i] = start_pin+i;
     }
-}
-
-LedArray::LedArray(int pin1, int pin2, int pin3, int pin4, int pin5)
-{
-    this->sensor_pins[0] = pin1;
-    this->sensor_pins[1] = pin2;
-    this->sensor_pins[2] = pin3;
-    this->sensor_pins[3] = pin4;
-    this->sensor_pins[4] = pin5;
 }
 
 void LedArray::init()
@@ -65,13 +58,7 @@ char LedArray::isTape()
     Serial.println("Sensor values");
     for (int i = 0; i < LED_SENSOR_COUNT; i++)
     {
-        Serial.print("values: ");
-        Serial.print(values[i]);
-        Serial.print(" ");
-        Serial.print(this->floor_average[i]);
-        Serial.print(" = ");
-        Serial.print((this->floor_average[i] * LED_TAPE_FACTOR));
-        if (values[i] < (this->floor_average[i] * LED_TAPE_FACTOR))
+        if (values[i] < (this->floor_average[i] * tape_factor))
         {
             Serial.print(values[i]);
             Serial.print("\t");

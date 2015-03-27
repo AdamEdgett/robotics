@@ -22,7 +22,7 @@
 #define DIR_FW LOW
 #define DIR_BW HIGH
 
-LedArray ledArray(LED_START_PIN);
+LedArray ledArray(LED_START_PIN, LED_TAPE_FACTOR);
 
 void setup()
 {
