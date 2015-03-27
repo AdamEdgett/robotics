@@ -13,8 +13,8 @@
 #define LED_TAPE_FACTOR 0.95
 
 // Speed constants
-#define SPEED_FAST 170
-#define SPEED_MED 110
+#define SPEED_FAST 130
+#define SPEED_MED 80
 #define SPEED_SLOW 50
 #define SPEED_NONE 0
 
@@ -77,7 +77,7 @@ void loop() {
     case B10110:
     case B11010:
     case B11110:
-      pivotLeft();
+      goLeft();
       break;
 
     // right corner
@@ -86,7 +86,7 @@ void loop() {
     case B01101:
     case B01011:
     case B01111:
-      pivotRight();
+      goRight();
       break;
 
     default:
@@ -115,7 +115,7 @@ void goLeft() {
 void goRight() {
     Serial.println("go right");
     analogWrite(SPEED_LEFT, SPEED_FAST);
-    analogWrite(SPEED_RIGHT, SPEED_SLOW);
+    analogWrite(SPEED_RIGHT, SPEED_NONE);
 }
 
 void correctLeft() {
@@ -128,16 +128,4 @@ void correctRight() {
     Serial.println("correct right");
     analogWrite(SPEED_LEFT, SPEED_MED);
     analogWrite(SPEED_RIGHT, SPEED_SLOW);
-}
-
-void pivotLeft() {
-    Serial.println("pivot left");
-    analogWrite(SPEED_LEFT, SPEED_NONE);
-    analogWrite(SPEED_RIGHT, SPEED_FAST);
-}
-
-void pivotRight() {
-    Serial.println("pivot right");
-    analogWrite(SPEED_LEFT, SPEED_FAST);
-    analogWrite(SPEED_RIGHT, SPEED_NONE);
 }
