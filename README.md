@@ -5,6 +5,10 @@
 Robot follows a wall and turns appropriately around and in corners  
 Uses ultrasonic sensors to determine distances to walls  
 
+### Line Follow
+Robot follows a line of tape around corners and loops  
+Uses an IR LED array to determine where tape is  
+
 ## Variables
 ### Motors
 M1 = Right  
