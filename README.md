@@ -9,6 +9,10 @@ Uses ultrasonic sensors to determine distances to walls
 Robot follows a line of tape around corners and loops  
 Uses an IR LED array to determine where tape is  
 
+### Light Follow
+Robot follows a flashlight shone in front of it  
+Uses an IR receiver array to determine where light is  
+
 ## Variables
 ### Motors
 M1 = Right  
